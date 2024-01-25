@@ -2,8 +2,11 @@ package com.github.com.ebrahimi16153.todo.repository
 
 import com.github.com.ebrahimi16153.todo.data.TodoDao
 import com.github.com.ebrahimi16153.todo.data.models.ToDoTask
+import dagger.hilt.android.scopes.ViewModelScoped
 import javax.inject.Inject
 
+
+@ViewModelScoped
 class TodoRepository @Inject constructor(private val todoDao: TodoDao) {
 
     val allTask = todoDao.getAll()
