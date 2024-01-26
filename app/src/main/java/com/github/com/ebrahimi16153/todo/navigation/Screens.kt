@@ -15,8 +15,9 @@ class Screens(navController: NavHostController) {
     }
 
     // handel navigate to TaskScreen
-    val task:(Int) -> Unit = {taskID ->
+    val task:(taskId:Int) -> Unit = {taskID ->
         navController.navigate(route = "task/$taskID")
     }
+
 
 }

@@ -1,4 +1,4 @@
-package com.github.com.ebrahimi16153.todo.navigation.screens
+package com.github.com.ebrahimi16153.todo.navigation.destinations
 
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavType
