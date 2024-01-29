@@ -20,10 +20,12 @@ fun ListScreen(
 ) {
 
     Scaffold(topBar = {
-        DefaulterListTopAppBar(
-            onSearchClick = {},
-            onSortClick = {},
-            onDeleteAll = {})
+//        DefaulterListTopAppBar(
+//            onSearchClick = {},
+//            onSortClick = {},
+//            onDeleteAll = {})
+                      SearchBar(onValueChange = {}, onSerachClick ={}, onCloseClick = {} )
+
     }, content = {}, floatingActionButton = { FabButton(navigateToTask = navigateToTask) })
 
 
