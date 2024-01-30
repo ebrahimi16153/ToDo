@@ -8,23 +8,45 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.tooling.preview.Preview
 import com.github.com.ebrahimi16153.todo.R
+import com.github.com.ebrahimi16153.todo.util.SearchBarState
+import com.github.com.ebrahimi16153.todo.viewmodel.SharedViewModel
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
 fun ListScreen(
-    navigateToTask: (taskId: Int) -> Unit
+    navigateToTask: (taskId: Int) -> Unit,
+    shearedViewModel: SharedViewModel
 ) {
 
+    // first way to define val
+
+    val searchTextState = remember {
+        shearedViewModel.searchTextState
+    }
+
+    val searchBarState = remember {
+        shearedViewModel.searchBarState
+    }
+
+    // second way to define val
+//    val searchTextState :String by shearedViewModel.searchTextState
+//    val searchBarState :SearchBarState by shearedViewModel.searchBarState
+
     Scaffold(topBar = {
-//        DefaulterListTopAppBar(
-//            onSearchClick = {},
-//            onSortClick = {},
-//            onDeleteAll = {})
-                      SearchBar(onValueChange = {}, onSerachClick ={}, onCloseClick = {} )
+
+        ListAppBar(
+            shearedViewModel = shearedViewModel,
+            onSearchClick = {},
+            onSortClick = {},
+            onDeleteAll = {},
+            searchBarState = searchBarState.value,
+            textState = searchTextState.value
+        )
+
 
     }, content = {}, floatingActionButton = { FabButton(navigateToTask = navigateToTask) })
 
@@ -46,10 +68,3 @@ fun FabButton(
     }
 }
 
-@Composable
-@Preview
-fun ListScreenPreview() {
-    ListScreen(navigateToTask = {
-
-    })
-}

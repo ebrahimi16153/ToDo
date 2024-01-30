@@ -6,7 +6,6 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
@@ -21,12 +20,9 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.ShapeDefaults
-import androidx.compose.material3.Shapes
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
-import androidx.compose.material3.TextFieldColors
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
@@ -47,18 +43,60 @@ import com.github.com.ebrahimi16153.todo.R
 import com.github.com.ebrahimi16153.todo.component.PriorityCircle
 import com.github.com.ebrahimi16153.todo.data.Priority
 import com.github.com.ebrahimi16153.todo.ui.theme.myError
-import java.nio.file.WatchEvent
+import com.github.com.ebrahimi16153.todo.util.SearchBarState
+import com.github.com.ebrahimi16153.todo.viewmodel.SharedViewModel
 
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun DefaulterListTopAppBar(
+fun ListAppBar(
 
+    shearedViewModel: SharedViewModel,
+    onSearchClick: () -> Unit,
+    onSortClick: (Priority) -> Unit,
+    onDeleteAll: () -> Unit,
+    searchBarState: SearchBarState,
+    textState: String,
+
+    ) {
+
+    //handel DefaultAppBar OR SearchAppBar
+
+    when (searchBarState) {
+        SearchBarState.Close -> {
+            DefaultAppBar(onSearchClick = {
+                // change value of searchBarState from ViewModel
+                shearedViewModel.searchBarState.value = SearchBarState.Open
+            }, onSortClick = {}, onDeleteAll = {})
+        }
+
+        else -> {
+            SearchBar(
+                value = textState,
+                onValueChange = { newText->
+                    shearedViewModel.searchTextState.value = newText },
+                onSerachClick = {},
+                onCloseClick = {
+
+                    // Change value from viewModel
+                    if (textState.isEmpty())
+                        shearedViewModel.searchBarState.value = SearchBarState.Close
+                    else
+                        shearedViewModel.searchTextState.value = ""
+                })
+        }
+    }
+
+
+}
+
+
+@Composable
+@OptIn(ExperimentalMaterial3Api::class)
+private fun DefaultAppBar(
     onSearchClick: () -> Unit,
     onSortClick: (Priority) -> Unit,
     onDeleteAll: () -> Unit
-
-
 ) {
     TopAppBar(
         modifier = Modifier.background(MaterialTheme.colorScheme.primary),
@@ -203,25 +241,24 @@ fun DeleteAll(onDeleteAll: () -> Unit) {
 
 @Composable
 fun SearchBar(
-
+    value: String,
     onValueChange: (String) -> Unit,
     onSerachClick: (String) -> Unit,
     onCloseClick: () -> Unit
 
-    ) {
+) {
 
 
     Surface(
         modifier = Modifier
-            .fillMaxWidth()
-            .height(56.dp),
+            .fillMaxWidth(),
         contentColor = MaterialTheme.colorScheme.primary
     ) {
 
         TextField(
-            value = "",
+            value = value,
             onValueChange = {
-                onSerachClick(it)
+                onValueChange(it)
             },
             placeholder = {
                 Text(
@@ -243,7 +280,7 @@ fun SearchBar(
             },
             singleLine = true,
             trailingIcon = {
-                IconButton(onClick = { onCloseClick()}) {
+                IconButton(onClick = { onCloseClick() }) {
                     Icon(
                         imageVector = Icons.Default.Close,
                         contentDescription = "",
@@ -254,11 +291,14 @@ fun SearchBar(
             colors = TextFieldDefaults.colors(
                 unfocusedContainerColor = MaterialTheme.colorScheme.primary,
                 focusedContainerColor = MaterialTheme.colorScheme.primary,
-                cursorColor = MaterialTheme.colorScheme.onPrimary
+                cursorColor = MaterialTheme.colorScheme.onPrimary,
+                unfocusedTextColor = MaterialTheme.colorScheme.onPrimary,
+                focusedTextColor = MaterialTheme.colorScheme.onPrimary
             ),
             shape = RectangleShape,
             keyboardOptions = KeyboardOptions(imeAction = ImeAction.Search),
-            keyboardActions = KeyboardActions(onSearch = {/* TODO */})
+            keyboardActions = KeyboardActions(onSearch = {/* TODO */ }),
+
         )
 
 
@@ -267,17 +307,4 @@ fun SearchBar(
 
 }
 
-@Composable
-@Preview
-fun PreviewListTopAppBar() {
-    Action(onSearchClick = { /*TODO*/ }, onSortClick = {}, onDeleteAll = {})
 
-
-}
-
-
-@Composable
-@Preview
-fun PreviewSearchBar() {
-    SearchBar(onValueChange = {}, onSerachClick = {}, onCloseClick = {})
-}
