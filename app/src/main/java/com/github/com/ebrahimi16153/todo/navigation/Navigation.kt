@@ -17,7 +17,7 @@ fun Navigation(navController: NavHostController, shearedViewModel: SharedViewMod
     }
     NavHost(navController = navController, startDestination = LIST_SCREEN ){
 
-        listComposable(screen.task , shearedViewModel = shearedViewModel)
+        listComposable(navigateToTaskScreen = screen.task, shearedViewModel = shearedViewModel)
 
         taskComposable(screen.list)
 

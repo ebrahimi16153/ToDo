@@ -1,6 +1,9 @@
 package com.github.com.ebrahimi16153.todo.screens.list
 
 import android.annotation.SuppressLint
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material3.FloatingActionButton
@@ -9,8 +12,10 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.unit.dp
 import com.github.com.ebrahimi16153.todo.R
 import com.github.com.ebrahimi16153.todo.util.SearchBarState
 import com.github.com.ebrahimi16153.todo.viewmodel.SharedViewModel
@@ -48,7 +53,15 @@ fun ListScreen(
         )
 
 
-    }, content = {}, floatingActionButton = { FabButton(navigateToTask = navigateToTask) })
+    }, floatingActionButton = { FabButton(navigateToTask = navigateToTask) }){
+
+      Column( modifier = Modifier
+          .fillMaxSize().padding(it)
+      ) {
+             ListContent(navigateToDoTask = navigateToTask)
+      }
+
+    }
 
 
 }
