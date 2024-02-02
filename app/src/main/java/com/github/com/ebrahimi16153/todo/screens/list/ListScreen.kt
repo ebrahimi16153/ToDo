@@ -11,13 +11,14 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.unit.dp
 import com.github.com.ebrahimi16153.todo.R
-import com.github.com.ebrahimi16153.todo.util.SearchBarState
 import com.github.com.ebrahimi16153.todo.viewmodel.SharedViewModel
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
@@ -27,8 +28,11 @@ fun ListScreen(
     shearedViewModel: SharedViewModel
 ) {
 
-    // first way to define val
+    LaunchedEffect(key1 = true ){
+        shearedViewModel.getAllTask()
+    }
 
+    // first way to define val
     val searchTextState = remember {
         shearedViewModel.searchTextState
     }
@@ -36,6 +40,9 @@ fun ListScreen(
     val searchBarState = remember {
         shearedViewModel.searchBarState
     }
+
+    // list of all task
+    val tasks by shearedViewModel.allTask.collectAsState()
 
     // second way to define val
 //    val searchTextState :String by shearedViewModel.searchTextState
@@ -56,9 +63,10 @@ fun ListScreen(
     }, floatingActionButton = { FabButton(navigateToTask = navigateToTask) }){
 
       Column( modifier = Modifier
-          .fillMaxSize().padding(it)
+          .fillMaxSize()
+          .padding(it)
       ) {
-             ListContent(navigateToDoTask = navigateToTask)
+             ListContent(navigateToDoTask = navigateToTask, listOfTask = tasks)
       }
 
     }

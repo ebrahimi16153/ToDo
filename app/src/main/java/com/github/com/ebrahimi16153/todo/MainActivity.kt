@@ -14,6 +14,8 @@ import dagger.hilt.android.AndroidEntryPoint
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
 
+
+
     private lateinit var navController: NavHostController
     private val shearedViewModel:SharedViewModel by viewModels()
 

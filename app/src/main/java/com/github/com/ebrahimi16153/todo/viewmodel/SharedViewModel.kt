@@ -4,6 +4,7 @@ import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.github.com.ebrahimi16153.todo.data.RequestState
 import com.github.com.ebrahimi16153.todo.data.models.ToDoTask
 import com.github.com.ebrahimi16153.todo.repository.TodoRepository
 import com.github.com.ebrahimi16153.todo.util.SearchBarState
@@ -17,9 +18,11 @@ import javax.inject.Inject
 class SharedViewModel @Inject constructor(private val todoRepository: TodoRepository) :
     ViewModel() {
 
+        //RequestState is Sealed class that we crated for handel  loading,Error,and data
+        // and other hand it is a Result Class
 
-    private val _allTask = MutableStateFlow<List<ToDoTask>>(emptyList())
-    val allTask: StateFlow<List<ToDoTask>> = _allTask
+    private val _allTask = MutableStateFlow<RequestState<List<ToDoTask>>>(RequestState.Idle)
+    val allTask: StateFlow<RequestState<List<ToDoTask>>> = _allTask
 
 
     val searchBarState: MutableState<SearchBarState> = mutableStateOf(SearchBarState.Close)
@@ -27,11 +30,23 @@ class SharedViewModel @Inject constructor(private val todoRepository: TodoReposi
 
 
     fun getAllTask() {
-        viewModelScope.launch {
-            todoRepository.allTask.collect {
-                _allTask.value = it
+        // first -> loading
+        _allTask.value = RequestState.Loading
+
+        // then fill with data from db or fill with error
+
+        try {
+            viewModelScope.launch {
+                todoRepository.allTask.collect { listOfAllTask ->
+                    _allTask.value = RequestState.Success(data = listOfAllTask)
+                }
             }
+
+        }catch (e:Exception){
+            _allTask.value = RequestState.Error(error = e)
         }
+
+
     }
 
 
