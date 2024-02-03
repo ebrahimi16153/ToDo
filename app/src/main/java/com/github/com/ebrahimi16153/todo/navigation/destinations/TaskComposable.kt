@@ -10,9 +10,11 @@ import com.github.com.ebrahimi16153.todo.navigation.Action
 import com.github.com.ebrahimi16153.todo.screens.task.TaskScreen
 import com.github.com.ebrahimi16153.todo.util.Constants.TASK_SCREEN
 import com.github.com.ebrahimi16153.todo.util.Constants.TASK_SCREEN_ARGUMENT_KEY
+import com.github.com.ebrahimi16153.todo.viewmodel.SharedViewModel
 
 fun NavGraphBuilder.taskComposable(
-    navigateToListScreen : (Action) -> Unit
+    sharedViewModel: SharedViewModel,
+    navigateToListScreen: (Action) -> Unit
 
 ) {
 
@@ -25,7 +27,11 @@ fun NavGraphBuilder.taskComposable(
 
         val taskId = navBackStackEntry.arguments!!.getInt(TASK_SCREEN_ARGUMENT_KEY)
 
-        TaskScreen( navigateToList = navigateToListScreen )
+        TaskScreen(
+            navigateToList = navigateToListScreen,
+            sharedViewModel = sharedViewModel,
+            taskId = taskId
+        )
 
 
     }

@@ -4,6 +4,7 @@ import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.github.com.ebrahimi16153.todo.data.RequestState
 import com.github.com.ebrahimi16153.todo.data.models.ToDoTask
 import com.github.com.ebrahimi16153.todo.repository.TodoRepository
@@ -11,6 +12,7 @@ import com.github.com.ebrahimi16153.todo.util.SearchBarState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -44,6 +46,22 @@ class SharedViewModel @Inject constructor(private val todoRepository: TodoReposi
 
         }catch (e:Exception){
             _allTask.value = RequestState.Error(error = e)
+        }
+    }
+
+    private val _task:MutableStateFlow<ToDoTask?> = MutableStateFlow(null)
+    val task : StateFlow<ToDoTask?> = _task
+    fun getTaskById (taskId:Int){
+
+        viewModelScope.launch {
+
+            todoRepository.getTask(taskId = taskId).collect{task ->
+                _task.update {
+                    task
+                }
+            }
+
+
         }
 
 
