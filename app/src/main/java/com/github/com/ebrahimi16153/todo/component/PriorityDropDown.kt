@@ -22,6 +22,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -45,6 +46,7 @@ fun PriorityDropDown(
         modifier = Modifier
             .fillMaxWidth()
             .height(64.dp)
+            .clip(shape = MaterialTheme.shapes.small)
             .background(MaterialTheme.colorScheme.primary)
             .clickable {
                 expanded = true
@@ -55,12 +57,14 @@ fun PriorityDropDown(
         Canvas(modifier = Modifier
             .size(16.dp)
             .weight(0.1f), onDraw = { drawCircle(color = priority.color) })
+
         Text(
             modifier = Modifier.weight(0.8f),
-            text = "Priority",
+            text = priority.name,
             style = MaterialTheme.typography.titleMedium,
             color = MaterialTheme.colorScheme.onPrimary
         )
+
         Icon(
             modifier = Modifier
                 .rotate(angle)
@@ -70,9 +74,8 @@ fun PriorityDropDown(
             tint = MaterialTheme.colorScheme.onPrimary.copy( alpha = 0.5f)
         )
 
-
         DropdownMenu(
-            modifier = Modifier.fillMaxWidth(),
+            modifier = Modifier.fillMaxWidth(fraction = 0.93f),
             expanded = expanded,
             onDismissRequest = { expanded = false }) {
 
@@ -82,7 +85,6 @@ fun PriorityDropDown(
                 onPrioritySelected(Priority.Low)
                 expanded = false
             })
-
 
             DropdownMenuItem(text = {
                 PriorityCircle(priority = Priority.Medium)
@@ -97,12 +99,8 @@ fun PriorityDropDown(
                 onPrioritySelected(Priority.High)
                 expanded = false
             })
-
         }
-
     }
-
-
 }
 
 
