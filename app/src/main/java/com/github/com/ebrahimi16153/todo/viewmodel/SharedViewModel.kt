@@ -85,5 +85,18 @@ class SharedViewModel @Inject constructor(private val todoRepository: TodoReposi
 
     }
 
+    // set a limit to set title
+    fun updateTitle(newTitle: String) {
+        if (newTitle.length < 20) {
+            title.value = newTitle
+        }
+    }
+
+
+    // validate title and description
+    fun validateTitleAndDescription(): Boolean {
+        return title.value.isNotEmpty() && description.value.isNotEmpty()
+    }
+
 
 }
