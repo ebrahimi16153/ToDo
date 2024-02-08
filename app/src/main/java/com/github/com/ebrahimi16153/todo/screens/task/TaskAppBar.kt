@@ -14,10 +14,8 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.text.style.TextOverflow
-import androidx.compose.ui.tooling.preview.Preview
 import com.github.com.ebrahimi16153.todo.data.models.ToDoTask
 import com.github.com.ebrahimi16153.todo.navigation.Action
-import com.github.com.ebrahimi16153.todo.viewmodel.SharedViewModel
 
 
 @OptIn(ExperimentalMaterial3Api::class)

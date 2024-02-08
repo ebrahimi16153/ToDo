@@ -5,6 +5,7 @@ import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.github.com.ebrahimi16153.todo.data.Priority
 import com.github.com.ebrahimi16153.todo.data.RequestState
 import com.github.com.ebrahimi16153.todo.data.models.ToDoTask
@@ -87,7 +88,7 @@ class SharedViewModel @Inject constructor(private val todoRepository: TodoReposi
             title.value = toDoTask.title
             description.value = toDoTask.description
             priority.value = toDoTask.priority
-        }else{
+        } else {
             title.value = ""
             description.value = ""
             priority.value = Priority.Low
@@ -114,7 +115,11 @@ class SharedViewModel @Inject constructor(private val todoRepository: TodoReposi
     private fun addTask() {
         viewModelScope.launch(Dispatchers.IO) {
 
-            val task = ToDoTask(title = title.value, description = description.value)
+            val task = ToDoTask(
+                title = title.value,
+                description = description.value,
+                priority = priority.value
+            )
             todoRepository.insert(task)
 
 
@@ -125,10 +130,28 @@ class SharedViewModel @Inject constructor(private val todoRepository: TodoReposi
     private fun update() {
         viewModelScope.launch(Dispatchers.IO) {
 
-            val task = ToDoTask(id = id.value, title = title.value, description = description.value)
+            val task = ToDoTask(
+                id = id.value,
+                title = title.value,
+                description = description.value,
+                priority = priority.value
+            )
             todoRepository.insert(task)
 
 
+        }
+    }
+
+
+    private fun delete(){
+        viewModelScope.launch(Dispatchers.IO){
+            val task = ToDoTask(
+                id = id.value,
+                title = title.value,
+                description = description.value,
+                priority = priority.value
+            )
+            todoRepository.delete(task)
         }
     }
 
@@ -142,10 +165,12 @@ class SharedViewModel @Inject constructor(private val todoRepository: TodoReposi
             }
 
             Action.UPDATE -> {
-               update()
+                update()
             }
 
             Action.DELETE -> {
+
+                delete()
 
             }
 
@@ -154,6 +179,7 @@ class SharedViewModel @Inject constructor(private val todoRepository: TodoReposi
             }
 
             Action.UNDO -> {
+                addTask()
 
             }
 

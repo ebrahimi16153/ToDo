@@ -117,6 +117,6 @@ fun TaskItem(
 @Composable
 fun PreviewTaskItem() {
     TaskItem(
-        task = ToDoTask(id = 1, description = "", priority = Priority.High),
+        task = ToDoTask(id = 1, description = "", priority = Priority.Medium),
         navigateToDoTask = {})
 }
