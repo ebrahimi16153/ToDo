@@ -19,16 +19,24 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import com.github.com.ebrahimi16153.todo.R
+import com.github.com.ebrahimi16153.todo.navigation.Action
 import com.github.com.ebrahimi16153.todo.viewmodel.SharedViewModel
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
 fun ListScreen(
     navigateToTask: (taskId: Int) -> Unit,
-    shearedViewModel: SharedViewModel
+    shearedViewModel: SharedViewModel,
 ) {
 
-    LaunchedEffect(key1 = true ){
+    // handel actions
+    val action = shearedViewModel.action
+    LaunchedEffect(key1 = action) {
+        shearedViewModel.handelAction(action = action.value)
+    }
+    
+    // handel List of Task
+    LaunchedEffect(key1 = true) {
         shearedViewModel.getAllTask()
     }
 
@@ -60,14 +68,15 @@ fun ListScreen(
         )
 
 
-    }, floatingActionButton = { FabButton(navigateToTask = navigateToTask) }){
+    }, floatingActionButton = { FabButton(navigateToTask = navigateToTask) }) {
 
-      Column( modifier = Modifier
-          .fillMaxSize()
-          .padding(it)
-      ) {
-             ListContent(navigateToDoTask = navigateToTask, listOfTask = tasks)
-      }
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(it)
+        ) {
+            ListContent(navigateToDoTask = navigateToTask, listOfTask = tasks)
+        }
 
     }
 

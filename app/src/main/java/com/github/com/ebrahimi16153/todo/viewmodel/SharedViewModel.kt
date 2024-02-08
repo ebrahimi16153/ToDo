@@ -1,16 +1,18 @@
 package com.github.com.ebrahimi16153.todo.viewmodel
 
 import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import androidx.lifecycle.viewmodel.compose.viewModel
 import com.github.com.ebrahimi16153.todo.data.Priority
 import com.github.com.ebrahimi16153.todo.data.RequestState
 import com.github.com.ebrahimi16153.todo.data.models.ToDoTask
+import com.github.com.ebrahimi16153.todo.navigation.Action
 import com.github.com.ebrahimi16153.todo.repository.TodoRepository
 import com.github.com.ebrahimi16153.todo.util.SearchBarState
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.update
@@ -21,7 +23,10 @@ import javax.inject.Inject
 class SharedViewModel @Inject constructor(private val todoRepository: TodoRepository) :
     ViewModel() {
 
+    val action: MutableState<Action> = mutableStateOf(Action.NO_ACTION)
+
     // some value to handel TaskScreen
+    val id: MutableState<Int> = mutableIntStateOf(0)
     val title: MutableState<String> = mutableStateOf("")
     val description: MutableState<String> = mutableStateOf("")
     val priority: MutableState<Priority> = mutableStateOf(Priority.Low)
@@ -78,9 +83,14 @@ class SharedViewModel @Inject constructor(private val todoRepository: TodoReposi
 
     fun initTaskScreenValues(toDoTask: ToDoTask?) {
         if (toDoTask != null) {
+            id.value = toDoTask.id
             title.value = toDoTask.title
             description.value = toDoTask.description
             priority.value = toDoTask.priority
+        }else{
+            title.value = ""
+            description.value = ""
+            priority.value = Priority.Low
         }
 
     }
@@ -98,5 +108,63 @@ class SharedViewModel @Inject constructor(private val todoRepository: TodoReposi
         return title.value.isNotEmpty() && description.value.isNotEmpty()
     }
 
+
+    // CRUD functions
+
+    private fun addTask() {
+        viewModelScope.launch(Dispatchers.IO) {
+
+            val task = ToDoTask(title = title.value, description = description.value)
+            todoRepository.insert(task)
+
+
+        }
+    }
+
+    // update
+    private fun update() {
+        viewModelScope.launch(Dispatchers.IO) {
+
+            val task = ToDoTask(id = id.value, title = title.value, description = description.value)
+            todoRepository.insert(task)
+
+
+        }
+    }
+
+    // handel action -> database
+
+    fun handelAction(action: Action) {
+
+        when (action) {
+            Action.ADD -> {
+                addTask()
+            }
+
+            Action.UPDATE -> {
+               update()
+            }
+
+            Action.DELETE -> {
+
+            }
+
+            Action.DELETE_ALL -> {
+
+            }
+
+            Action.UNDO -> {
+
+            }
+
+            Action.NO_ACTION -> {
+
+            }
+        }
+
+        this.action.value = Action.NO_ACTION
+
+
+    }
 
 }

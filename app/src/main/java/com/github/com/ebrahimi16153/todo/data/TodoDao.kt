@@ -2,8 +2,10 @@ package com.github.com.ebrahimi16153.todo.data
 
 import androidx.room.Dao
 import androidx.room.Delete
+import androidx.room.Insert
+import androidx.room.OnConflictStrategy
 import androidx.room.Query
-import androidx.room.Upsert
+import androidx.room.Update
 import com.github.com.ebrahimi16153.todo.data.models.ToDoTask
 import com.github.com.ebrahimi16153.todo.util.Constants
 import kotlinx.coroutines.flow.Flow
@@ -17,8 +19,12 @@ interface TodoDao {
     @Query("SELECT * FROM ${Constants.TO_DO_TASK_TABLE} WHERE id=:id")
     fun getTodoTask(id: Int): Flow<ToDoTask>
 
-    @Upsert
-    suspend fun addTaskOrUpdate(task: ToDoTask)
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun insert(task: ToDoTask)
+
+
+    @Update
+    suspend fun update(task: ToDoTask)
 
 
     @Delete

@@ -15,7 +15,8 @@ class TodoRepository @Inject constructor(private val todoDao: TodoDao) {
     fun getBySearch(searchValue: String) = todoDao.getAllBySearch(searchQuery = searchValue)
     fun getTask(taskId: Int) = todoDao.getTodoTask(id = taskId)
 
-    suspend fun usert(toDoTask: ToDoTask) = todoDao.addTaskOrUpdate(toDoTask)
+    suspend fun insert(toDoTask: ToDoTask) = todoDao.insert(toDoTask)
+    suspend fun update(toDoTask: ToDoTask) = todoDao.update(toDoTask)
     suspend fun delete(toDoTask: ToDoTask) = todoDao.deleteTodoTask(toDoTask)
     suspend fun  deleteAll() = todoDao.deleteAll()
 

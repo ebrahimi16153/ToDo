@@ -8,33 +8,28 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.State
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import com.github.com.ebrahimi16153.todo.data.models.ToDoTask
 import com.github.com.ebrahimi16153.todo.navigation.Action
 import com.github.com.ebrahimi16153.todo.viewmodel.SharedViewModel
 
 
 @Composable
 fun TaskScreen(
-    taskId: Int,
     sharedViewModel: SharedViewModel,
-    navigateToList: (Action) -> Unit
+    navigateToList: (Action) -> Unit,
+    task: ToDoTask?
 ) {
 
 
     val context = LocalContext.current
 
-    sharedViewModel.getTaskById(taskId = taskId)
-    val selectedTask = sharedViewModel.task.collectAsState()
-
-    LaunchedEffect(key1 = selectedTask ){
-        sharedViewModel.getTaskById(taskId = taskId)
-    }
 
     Scaffold(topBar = {
         TaskAppBar(
-            task = selectedTask.value,
+            task = task,
 
             // handel every action what work
             navigateToList = { action ->
@@ -62,11 +57,6 @@ fun TaskScreen(
                 .fillMaxSize()
                 .padding(it)
         ) {
-
-            // every once  value of task is change blow code
-            LaunchedEffect(key1 = selectedTask) {
-                sharedViewModel.initTaskScreenValues(toDoTask = selectedTask.value)
-            }
 
 
             TaskContent(
