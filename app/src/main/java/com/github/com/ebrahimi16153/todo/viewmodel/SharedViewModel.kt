@@ -185,6 +185,17 @@ class SharedViewModel @Inject constructor(private val todoRepository: TodoReposi
         searchTextState.value = ""
     }
 
+
+    private fun deleteAll(){
+
+        viewModelScope.launch(Dispatchers.IO) {
+
+            todoRepository.deleteAll()
+
+        }
+
+    }
+
     // handel action -> database
 
     fun handelAction(action: Action) {
@@ -205,6 +216,8 @@ class SharedViewModel @Inject constructor(private val todoRepository: TodoReposi
             }
 
             Action.DELETE_ALL -> {
+
+                deleteAll()
 
             }
 

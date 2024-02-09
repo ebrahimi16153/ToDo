@@ -83,7 +83,9 @@ fun ListScreen(
                 shearedViewModel = shearedViewModel,
                 onSearchClick = {},
                 onSortClick = {},
-                onDeleteAll = {},
+                onDeleteAll = {
+                    shearedViewModel.handelAction(action = Action.DELETE_ALL)
+                },
                 searchBarState = searchBarState,
                 textState = searchTextState
             )
@@ -103,7 +105,12 @@ fun ListScreen(
                 .fillMaxSize()
                 .padding(it)
         ) {
-            ListContent(navigateToDoTask = navigateToTask, allTasks = tasks, searchOfTask = searchTask, searchAppBarState = searchBarState)
+            ListContent(
+                navigateToDoTask = navigateToTask,
+                allTasks = tasks,
+                searchOfTask = searchTask,
+                searchAppBarState = searchBarState
+            )
         }
 
     }
@@ -148,7 +155,7 @@ fun DisplaySnackBar(
                         actionLabel = setActionLabel(action = action),
                         duration = SnackbarDuration.Short
                     )
-                undo(action = action , snackbarResult = result, onUndoClicked = onUndoClicked)
+                undo(action = action, snackbarResult = result, onUndoClicked = onUndoClicked)
             }
         }
     }
@@ -168,9 +175,9 @@ private fun undo(
     snackbarResult: SnackbarResult,
     onUndoClicked: (Action) -> Unit
 
-){
+) {
 
-    if (snackbarResult == SnackbarResult.ActionPerformed && action == Action.DELETE){
+    if (snackbarResult == SnackbarResult.ActionPerformed && action == Action.DELETE) {
         onUndoClicked(Action.UNDO)
     }
 

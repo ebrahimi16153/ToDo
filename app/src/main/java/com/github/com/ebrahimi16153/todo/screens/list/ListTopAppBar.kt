@@ -68,7 +68,7 @@ fun ListAppBar(
             DefaultAppBar(onSearchClick = {
                 // change value of searchBarState from ViewModel
                 shearedViewModel.searchBarState.value = SearchBarState.Open
-            }, onSortClick = {}, onDeleteAll = {})
+            }, onSortClick = {}, onDeleteAll = onDeleteAll)
         }
 
         else -> {
