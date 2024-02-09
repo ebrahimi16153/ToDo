@@ -84,7 +84,9 @@ fun ListScreen(
                 onSearchClick = {},
                 onSortClick = {},
                 onDeleteAll = {
-                    shearedViewModel.handelAction(action = Action.DELETE_ALL)
+//                    shearedViewModel.handelAction(action = Action.DELETE_ALL)
+                    shearedViewModel.action.value = Action.DELETE_ALL
+
                 },
                 searchBarState = searchBarState,
                 textState = searchTextState
@@ -151,12 +153,24 @@ fun DisplaySnackBar(
             scope.launch {
                 val result = snackbarHostState
                     .showSnackbar(
-                        message = "$taskTitle : ${action.name}",
+                        message = setMessage(action = action , taskTitle =  taskTitle),
                         actionLabel = setActionLabel(action = action),
                         duration = SnackbarDuration.Short
                     )
                 undo(action = action, snackbarResult = result, onUndoClicked = onUndoClicked)
             }
+        }
+    }
+}
+
+private fun setMessage(action: Action, taskTitle: String): String {
+    return when (action) {
+        Action.DELETE_ALL -> {
+            "All Tasks Removed"
+        }
+
+        else -> {
+            "${action.name} :$taskTitle"
         }
     }
 }
