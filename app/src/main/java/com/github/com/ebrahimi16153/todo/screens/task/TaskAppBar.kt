@@ -13,7 +13,12 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.text.style.TextOverflow
+import com.github.com.ebrahimi16153.todo.component.MyAlertDialog
 import com.github.com.ebrahimi16153.todo.data.models.ToDoTask
 import com.github.com.ebrahimi16153.todo.navigation.Action
 
@@ -24,9 +29,9 @@ fun TaskAppBar(
     task: ToDoTask?,
     navigateToList: (Action) -> Unit
 ) {
-    if (task == null){
+    if (task == null) {
         NewTaskAppBar(navigateToList = navigateToList)
-    }else{
+    } else {
         ExistTaskBar(navigateToList = navigateToList, task = task)
     }
 
@@ -77,7 +82,10 @@ fun NewTaskAppBar(navigateToList: (Action) -> Unit) {
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun ExistTaskBar(navigateToList: (Action) -> Unit,task: ToDoTask?) {
+fun ExistTaskBar(
+    navigateToList: (Action) -> Unit,
+    task: ToDoTask?
+) {
     TopAppBar(
         colors = TopAppBarDefaults.topAppBarColors(containerColor = MaterialTheme.colorScheme.primary),
         title = {
@@ -103,29 +111,64 @@ fun ExistTaskBar(navigateToList: (Action) -> Unit,task: ToDoTask?) {
 
         }, actions = {
 
-            IconButton(onClick = { navigateToList(Action.DELETE) }) {
-
-                Icon(
-                    imageVector = Icons.Default.Delete,
-
-                    contentDescription = "",
-                    tint = MaterialTheme.colorScheme.onPrimary
-                )
-
-            }
-
-
-            IconButton(onClick = { navigateToList(Action.UPDATE) }) {
-                Icon(
-                    imageVector = Icons.Default.Check,
-                    contentDescription = "",
-                    tint = MaterialTheme.colorScheme.onPrimary
-                )
-            }
+           ExistingTaskAppBarAction(navigateToList = navigateToList, task = task )
 
         })
 
 
+}
+
+@Composable
+fun ExistingTaskAppBarAction(
+    navigateToList: (Action) -> Unit,
+    task: ToDoTask?
+) {
+
+    var openDialog by remember { mutableStateOf(false) }
+
+    MyAlertDialog(
+        title = "Remove ${task?.title}",
+        message = "Are you sure you wont to remove ${task?.title} ? ",
+        openDialog = openDialog,
+        closeDialog = { openDialog = false },
+        // confirm to delete
+        onYseClicked = {navigateToList(Action.DELETE)})
+
+
+    // open dialog
+    DeleteAction( onDeleteClicked = {
+        openDialog = true
+    })
+    // update Task
+    UpdateAction(onUpdateClicked = navigateToList)
+
+
+}
+
+
+@Composable
+private fun UpdateAction(onUpdateClicked: (Action) -> Unit) {
+    IconButton(onClick = { onUpdateClicked(Action.UPDATE) }) {
+        Icon(
+            imageVector = Icons.Default.Check,
+            contentDescription = "",
+            tint = MaterialTheme.colorScheme.onPrimary
+        )
+    }
+}
+
+@Composable
+private fun DeleteAction(onDeleteClicked: () -> Unit) {
+    IconButton(onClick = { onDeleteClicked() }) {
+
+        Icon(
+            imageVector = Icons.Default.Delete,
+
+            contentDescription = "",
+            tint = MaterialTheme.colorScheme.onPrimary
+        )
+
+    }
 }
 
 
