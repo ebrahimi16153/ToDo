@@ -5,7 +5,6 @@ import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import androidx.lifecycle.viewmodel.compose.viewModel
 import com.github.com.ebrahimi16153.todo.data.Priority
 import com.github.com.ebrahimi16153.todo.data.RequestState
 import com.github.com.ebrahimi16153.todo.data.models.ToDoTask
@@ -24,6 +23,7 @@ import javax.inject.Inject
 class SharedViewModel @Inject constructor(private val todoRepository: TodoRepository) :
     ViewModel() {
 
+
     val action: MutableState<Action> = mutableStateOf(Action.NO_ACTION)
 
     // some value to handel TaskScreen
@@ -39,6 +39,8 @@ class SharedViewModel @Inject constructor(private val todoRepository: TodoReposi
     private val _allTask = MutableStateFlow<RequestState<List<ToDoTask>>>(RequestState.Idle)
     val allTask: StateFlow<RequestState<List<ToDoTask>>> = _allTask
 
+    private val _searchTasks  = MutableStateFlow<RequestState<List<ToDoTask>>>(RequestState.Idle)
+    val searchTask :StateFlow<RequestState<List<ToDoTask>>> = _searchTasks
 
     val searchBarState: MutableState<SearchBarState> = mutableStateOf(SearchBarState.Close)
     val searchTextState: MutableState<String> = mutableStateOf("")
@@ -61,6 +63,30 @@ class SharedViewModel @Inject constructor(private val todoRepository: TodoReposi
             _allTask.value = RequestState.Error(error = e)
         }
     }
+
+
+    fun searchDataBase(searchQuery:String) {
+        // first -> loading
+        _searchTasks.value = RequestState.Loading
+
+        // then fill with data from db or fill with error
+
+        try {
+            viewModelScope.launch {
+                todoRepository.getBySearch(searchValue = "%$searchQuery%").collect{ searchTasks ->
+                    _searchTasks.value = RequestState.Success(data = searchTasks)
+                }
+            }
+
+        } catch (e: Exception) {
+            _searchTasks.value = RequestState.Error(error = e)
+        }
+
+        searchBarState.value = SearchBarState.Triggered
+
+    }
+
+
 
     private val _task: MutableStateFlow<ToDoTask?> = MutableStateFlow(null)
     val task: StateFlow<ToDoTask?> = _task
@@ -124,6 +150,8 @@ class SharedViewModel @Inject constructor(private val todoRepository: TodoReposi
 
 
         }
+        searchBarState.value = SearchBarState.Close
+        searchTextState.value = ""
     }
 
     // update
@@ -140,6 +168,7 @@ class SharedViewModel @Inject constructor(private val todoRepository: TodoReposi
 
 
         }
+        searchTextState.value = ""
     }
 
 
@@ -153,6 +182,7 @@ class SharedViewModel @Inject constructor(private val todoRepository: TodoReposi
             )
             todoRepository.delete(task)
         }
+        searchTextState.value = ""
     }
 
     // handel action -> database

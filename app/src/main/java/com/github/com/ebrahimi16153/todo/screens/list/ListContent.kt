@@ -17,7 +17,6 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.key
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.text.style.TextOverflow
@@ -27,41 +26,54 @@ import com.github.com.ebrahimi16153.todo.component.EmptyContent
 import com.github.com.ebrahimi16153.todo.data.Priority
 import com.github.com.ebrahimi16153.todo.data.RequestState
 import com.github.com.ebrahimi16153.todo.data.models.ToDoTask
+import com.github.com.ebrahimi16153.todo.util.SearchBarState
 
 @Composable
 fun ListContent(
     navigateToDoTask: (taskId: Int) -> Unit,
-    listOfTask: RequestState<List<ToDoTask>>
+    allTasks: RequestState<List<ToDoTask>>,
+    searchOfTask: RequestState<List<ToDoTask>>,
+    searchAppBarState: SearchBarState
 ) {
+    // when searchBarState is triggered  -> searchTasks must handel
+    if (searchAppBarState == SearchBarState.Triggered) {
 
-    // handel what happened when Request is data,Error,loading
+        // handel what happened when Request is data,Error,loading
+        if (searchOfTask is RequestState.Success) {
 
-    if (listOfTask is RequestState.Success){
-
-        // handel what happened when DataBase is empty
-
-
-        if (listOfTask.data.isEmpty()){
-            EmptyContent()
-        }else{
-            LazyColumn {
-                items(
-                    items = listOfTask.data,
-                    key = { task -> task.id })
-                { task ->
-                    TaskItem(task = task, navigateToDoTask = navigateToDoTask)
-                }
-            }
+            HandleListContent(tasks = searchOfTask.data, navigateToDoTask = navigateToDoTask)
 
         }
+    } else {
 
+        // handel what happened when Request is data,Error,loading
+        if (allTasks is RequestState.Success) {
+
+            HandleListContent(tasks = allTasks.data, navigateToDoTask = navigateToDoTask)
+
+        }
     }
 
+}
 
-
-
-
-
+@Composable
+fun HandleListContent(
+    tasks: List<ToDoTask>,
+    navigateToDoTask: (taskId: Int) -> Unit
+) {
+    // handel what happened when DataBase is empty or searchQuery Result is empty
+    if (tasks.isEmpty()) {
+        EmptyContent()
+    } else {
+        LazyColumn {
+            items(
+                items = tasks,
+                key = { task -> task.id })
+            { task ->
+                TaskItem(task = task, navigateToDoTask = navigateToDoTask)
+            }
+        }
+    }
 }
 
 @Composable

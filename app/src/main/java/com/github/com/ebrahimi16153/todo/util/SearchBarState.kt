@@ -4,6 +4,6 @@ enum class SearchBarState {
 
     Open,
     Close,
-    Triggerd
+    Triggered
 
 }

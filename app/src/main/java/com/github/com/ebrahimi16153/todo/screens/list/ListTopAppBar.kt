@@ -74,9 +74,14 @@ fun ListAppBar(
         else -> {
             SearchBar(
                 value = textState,
-                onValueChange = { newText->
-                    shearedViewModel.searchTextState.value = newText },
-                onSerachClick = {},
+                onValueChange = { newText ->
+                    shearedViewModel.searchTextState.value = newText
+                    // this below code for live search
+                    shearedViewModel.searchDataBase(newText)
+                },
+                onSerachClick = {
+                    shearedViewModel.searchDataBase(searchQuery = it)
+                },
                 onCloseClick = {
 
                     // Change value from viewModel
@@ -252,7 +257,8 @@ fun SearchBar(
 
     Surface(
         modifier = Modifier
-            .fillMaxWidth().height(64.dp),
+            .fillMaxWidth()
+            .height(64.dp),
         contentColor = MaterialTheme.colorScheme.primary
     ) {
 
@@ -298,9 +304,11 @@ fun SearchBar(
             ),
             shape = RectangleShape,
             keyboardOptions = KeyboardOptions(imeAction = ImeAction.Search),
-            keyboardActions = KeyboardActions(onSearch = {/* TODO */ }),
+            keyboardActions = KeyboardActions(onSearch = {
+                onSerachClick(value)
+            }),
 
-        )
+            )
 
 
     }

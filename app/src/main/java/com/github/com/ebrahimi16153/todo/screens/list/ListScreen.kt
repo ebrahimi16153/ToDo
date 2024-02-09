@@ -39,15 +39,20 @@ fun ListScreen(
     LaunchedEffect(key1 = true) {
         shearedViewModel.getAllTask()
     }
+    // list of all task
+    val tasks by shearedViewModel.allTask.collectAsState()
+    val searchTask by shearedViewModel.searchTask.collectAsState()
+
+
     // handel actions
     val action by shearedViewModel.action
 
     // first way to define val
-    val searchTextState = remember {
+    val searchTextState by remember {
         shearedViewModel.searchTextState
     }
 
-    val searchBarState = remember {
+    val searchBarState by remember {
         shearedViewModel.searchBarState
     }
 
@@ -65,8 +70,7 @@ fun ListScreen(
     )
 
     shearedViewModel.handelAction(action = action)
-    // list of all task
-    val tasks by shearedViewModel.allTask.collectAsState()
+
 
     // second way to define val
 //    val searchTextState :String by shearedViewModel.searchTextState
@@ -80,8 +84,8 @@ fun ListScreen(
                 onSearchClick = {},
                 onSortClick = {},
                 onDeleteAll = {},
-                searchBarState = searchBarState.value,
-                textState = searchTextState.value
+                searchBarState = searchBarState,
+                textState = searchTextState
             )
 
 
@@ -99,7 +103,7 @@ fun ListScreen(
                 .fillMaxSize()
                 .padding(it)
         ) {
-            ListContent(navigateToDoTask = navigateToTask, listOfTask = tasks)
+            ListContent(navigateToDoTask = navigateToTask, allTasks = tasks, searchOfTask = searchTask, searchAppBarState = searchBarState)
         }
 
     }
