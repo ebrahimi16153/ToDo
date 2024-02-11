@@ -17,12 +17,15 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import com.github.com.ebrahimi16153.todo.R
+import com.github.com.ebrahimi16153.todo.component.MyAlertDialog
 import com.github.com.ebrahimi16153.todo.navigation.Action
 import com.github.com.ebrahimi16153.todo.viewmodel.SharedViewModel
 import kotlinx.coroutines.launch
@@ -71,7 +74,6 @@ fun ListScreen(
 
     shearedViewModel.handelAction(action = action)
 
-
     // second way to define val
 //    val searchTextState :String by shearedViewModel.searchTextState
 //    val searchBarState :SearchBarState by shearedViewModel.searchBarState
@@ -81,13 +83,7 @@ fun ListScreen(
 
             ListAppBar(
                 shearedViewModel = shearedViewModel,
-                onSearchClick = {},
                 onSortClick = {},
-                onDeleteAll = {
-//                    shearedViewModel.handelAction(action = Action.DELETE_ALL)
-                    shearedViewModel.action.value = Action.DELETE_ALL
-
-                },
                 searchBarState = searchBarState,
                 textState = searchTextState
             )

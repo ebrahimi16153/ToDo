@@ -38,14 +38,15 @@ import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.input.ImeAction
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.github.com.ebrahimi16153.todo.R
+import com.github.com.ebrahimi16153.todo.component.MyAlertDialog
 import com.github.com.ebrahimi16153.todo.component.PriorityCircle
 import com.github.com.ebrahimi16153.todo.data.Priority
 import com.github.com.ebrahimi16153.todo.ui.theme.myError
 import com.github.com.ebrahimi16153.todo.util.SearchBarState
 import com.github.com.ebrahimi16153.todo.viewmodel.SharedViewModel
+import  com.github.com.ebrahimi16153.todo.navigation.Action
 
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -53,9 +54,7 @@ import com.github.com.ebrahimi16153.todo.viewmodel.SharedViewModel
 fun ListAppBar(
 
     shearedViewModel: SharedViewModel,
-    onSearchClick: () -> Unit,
     onSortClick: (Priority) -> Unit,
-    onDeleteAll: () -> Unit,
     searchBarState: SearchBarState,
     textState: String,
 
@@ -68,7 +67,7 @@ fun ListAppBar(
             DefaultAppBar(onSearchClick = {
                 // change value of searchBarState from ViewModel
                 shearedViewModel.searchBarState.value = SearchBarState.Open
-            }, onSortClick = {}, onDeleteAll = onDeleteAll)
+            }, onSortClick = {}, shearedViewModel = shearedViewModel)
         }
 
         else -> {
@@ -102,7 +101,7 @@ fun ListAppBar(
 private fun DefaultAppBar(
     onSearchClick: () -> Unit,
     onSortClick: (Priority) -> Unit,
-    onDeleteAll: () -> Unit
+    shearedViewModel: SharedViewModel
 ) {
     TopAppBar(
         modifier = Modifier.background(MaterialTheme.colorScheme.primary),
@@ -112,7 +111,7 @@ private fun DefaultAppBar(
             Action(
                 onSearchClick = onSearchClick,
                 onSortClick = onSortClick,
-                onDeleteAll = onDeleteAll
+                shearedViewModel = shearedViewModel
             )
         })
 }
@@ -122,13 +121,52 @@ private fun DefaultAppBar(
 fun Action(
     onSearchClick: () -> Unit,
     onSortClick: (Priority) -> Unit,
-    onDeleteAll: () -> Unit
+    shearedViewModel: SharedViewModel
 ) {
+
+    var openDialog by remember {
+        mutableStateOf(false)
+    }
     Search(onSearchClick = onSearchClick)
     Spacer(modifier = Modifier.width(5.dp))
     SortList(onSortClick = onSortClick)
     Spacer(modifier = Modifier.width(5.dp))
-    DeleteAll(onDeleteAll = onDeleteAll)
+
+    DisplayAlertDialog(
+        title = "Delete all Task!!!",
+        description = "Are sure want to delete all Tasks?",
+        openDialog = openDialog,
+        closeDialog = { openDialog = false },
+        onYesClicked = {
+            shearedViewModel.action.value = Action.DELETE_ALL
+            openDialog = false
+        })
+    DeleteAll(onDeleteAll = {
+        openDialog = true
+    })
+
+
+}
+
+
+@Composable
+fun DisplayAlertDialog(
+    title: String,
+    description: String,
+    openDialog: Boolean,
+    closeDialog: () -> Unit,
+    onYesClicked: () -> Unit
+) {
+
+
+    MyAlertDialog(
+        openDialog = openDialog,
+        title = title,
+        message = description,
+        closeDialog = closeDialog,
+        onYseClicked = onYesClicked
+    )
+
 
 }
 
