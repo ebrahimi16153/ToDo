@@ -11,5 +11,7 @@ object Constants {
     const val TASK_SCREEN = "task/{taskId}"
     const val LIST_SCREEN_ARGUMENT_KEY = "action"
     const val TASK_SCREEN_ARGUMENT_KEY = "taskId"
+    const val PREFERENCES_NAME = "preferences_name"
+    const val SORT_KEY = "sort_key"
 
 }
