@@ -45,4 +45,8 @@ interface TodoDao {
     @Query("SELECT * FROM ${Constants.TO_DO_TASK_TABLE} ORDER BY CASE WHEN priority LIKE 'H%' THEN 1 WHEN priority LIKE 'M%' THEN 2 WHEN priority LIKE 'L%' THEN 3 END ")
     fun sortByHighPriority(): Flow<List<ToDoTask>>
 
+
+    @Query("SELECT * FROM ${Constants.TO_DO_TASK_TABLE} ORDER BY CASE WHEN priority LIKE 'M%' THEN 1 WHEN priority LIKE 'H%' THEN 2 WHEN priority LIKE 'L%' THEN 3 END ")
+    fun sortByMediumPriority(): Flow<List<ToDoTask>>
+
 }

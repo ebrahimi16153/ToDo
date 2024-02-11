@@ -12,6 +12,7 @@ class TodoRepository @Inject constructor(private val todoDao: TodoDao) {
     val allTask = todoDao.getAll()
     val getAllByLowPriority = todoDao.sortByLowPriority()
     val getAllByHighPriority = todoDao.sortByHighPriority()
+    val getAllByMediumPriority = todoDao.sortByMediumPriority()
     fun getBySearch(searchValue: String) = todoDao.getAllBySearch(searchQuery = searchValue)
     fun getTask(taskId: Int) = todoDao.getTodoTask(id = taskId)
 

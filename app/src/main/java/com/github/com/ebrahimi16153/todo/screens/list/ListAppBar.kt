@@ -54,7 +54,6 @@ import  com.github.com.ebrahimi16153.todo.navigation.Action
 fun ListAppBar(
 
     shearedViewModel: SharedViewModel,
-    onSortClick: (Priority) -> Unit,
     searchBarState: SearchBarState,
     textState: String,
 
@@ -67,7 +66,11 @@ fun ListAppBar(
             DefaultAppBar(onSearchClick = {
                 // change value of searchBarState from ViewModel
                 shearedViewModel.searchBarState.value = SearchBarState.Open
-            }, onSortClick = {}, shearedViewModel = shearedViewModel)
+            }, onSortClick = { priority ->
+
+                shearedViewModel.saveSortByPriorityState(priority = priority)
+
+            }, shearedViewModel = shearedViewModel)
         }
 
         else -> {
@@ -231,6 +234,16 @@ fun SortList(onSortClick: (Priority) -> Unit) {
         }, onClick = {
             expend = false
             onSortClick(Priority.Low)
+        })
+
+
+        DropdownMenuItem(text = {
+            PriorityCircle(priority = Priority.None)
+
+
+        }, onClick = {
+            expend = false
+            onSortClick(Priority.None)
         })
     }
 

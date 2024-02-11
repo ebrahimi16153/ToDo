@@ -33,26 +33,52 @@ fun ListContent(
     navigateToDoTask: (taskId: Int) -> Unit,
     allTasks: RequestState<List<ToDoTask>>,
     searchOfTask: RequestState<List<ToDoTask>>,
-    searchAppBarState: SearchBarState
+    searchAppBarState: SearchBarState,
+    priorityState: RequestState<Priority>,
+    taskByLow: List<ToDoTask>,
+    taskByMedium: List<ToDoTask>,
+    taskByHigh: List<ToDoTask>
 ) {
-    // when searchBarState is triggered  -> searchTasks must handel
-    if (searchAppBarState == SearchBarState.Triggered) {
 
-        // handel what happened when Request is data,Error,loading
-        if (searchOfTask is RequestState.Success) {
 
-            HandleListContent(tasks = searchOfTask.data, navigateToDoTask = navigateToDoTask)
+    if (priorityState is RequestState.Success) {
+        // when searchBarState is triggered  -> searchTasks must handel
+        if (searchAppBarState == SearchBarState.Triggered) {
 
-        }
-    } else {
+            // handel what happened when Request is data,Error,loading
+            if (searchOfTask is RequestState.Success) {
 
-        // handel what happened when Request is data,Error,loading
-        if (allTasks is RequestState.Success) {
+                HandleListContent(tasks = searchOfTask.data, navigateToDoTask = navigateToDoTask)
 
-            HandleListContent(tasks = allTasks.data, navigateToDoTask = navigateToDoTask)
+            }
+        } else {
+            when (priorityState.data) {
+                Priority.None -> {
+                    if (allTasks is RequestState.Success) {
+                        HandleListContent(
+                            tasks = allTasks.data,
+                            navigateToDoTask = navigateToDoTask
+                        )
+                    }
+                }
+
+                Priority.High -> {
+
+                    HandleListContent(tasks = taskByHigh, navigateToDoTask = navigateToDoTask)
+                }
+
+                Priority.Medium -> {
+                    HandleListContent(tasks = taskByMedium, navigateToDoTask = navigateToDoTask)
+                }
+
+                Priority.Low -> {
+                    HandleListContent(tasks = taskByLow, navigateToDoTask = navigateToDoTask)
+                }
+            }
 
         }
     }
+
 
 }
 

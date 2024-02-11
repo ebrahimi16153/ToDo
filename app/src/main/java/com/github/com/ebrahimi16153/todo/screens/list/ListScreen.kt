@@ -17,15 +17,12 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import com.github.com.ebrahimi16153.todo.R
-import com.github.com.ebrahimi16153.todo.component.MyAlertDialog
 import com.github.com.ebrahimi16153.todo.navigation.Action
 import com.github.com.ebrahimi16153.todo.viewmodel.SharedViewModel
 import kotlinx.coroutines.launch
@@ -41,11 +38,19 @@ fun ListScreen(
     // handel List of Task
     LaunchedEffect(key1 = true) {
         shearedViewModel.getAllTask()
+        shearedViewModel.priorityFromDataStore()
     }
     // list of all task
     val tasks by shearedViewModel.allTask.collectAsState()
-    val searchTask by shearedViewModel.searchTask.collectAsState()
+    // list of search tasks
 
+    val taskByLow by shearedViewModel.getTasksByLowPriority.collectAsState()
+    val taskByMedium by shearedViewModel.getTasksByMediumPriority.collectAsState()
+    val taskByHigh by shearedViewModel.getTasksByHighPriority.collectAsState()
+
+    val searchTask by shearedViewModel.searchTask.collectAsState()
+    // get priority from data Store
+    val priorityState = shearedViewModel.getSortByPriorityFromDataStore.collectAsState()
 
     // handel actions
     val action by shearedViewModel.action
@@ -60,10 +65,10 @@ fun ListScreen(
     }
 
     // snackBar
-    val snackbarHostState = remember { SnackbarHostState() }
+    val snackBarHostState = remember { SnackbarHostState() }
 
     DisplaySnackBar(
-        snackbarHostState = snackbarHostState,
+        snackbarHostState = snackBarHostState,
         handelDataBaseAction = { shearedViewModel.handelAction(action = action) },
         action = action,
         taskTitle = shearedViewModel.title.value,
@@ -83,7 +88,6 @@ fun ListScreen(
 
             ListAppBar(
                 shearedViewModel = shearedViewModel,
-                onSortClick = {},
                 searchBarState = searchBarState,
                 textState = searchTextState
             )
@@ -93,7 +97,7 @@ fun ListScreen(
         floatingActionButton = {
             FabButton(navigateToTask = navigateToTask)
         }, snackbarHost = {
-            SnackbarHost(hostState = snackbarHostState)
+            SnackbarHost(hostState = snackBarHostState)
         }
     )
     {
@@ -104,7 +108,11 @@ fun ListScreen(
                 .padding(it)
         ) {
             ListContent(
+                priorityState = priorityState.value,
                 navigateToDoTask = navigateToTask,
+                taskByLow = taskByLow,
+                taskByMedium = taskByMedium,
+                taskByHigh = taskByHigh,
                 allTasks = tasks,
                 searchOfTask = searchTask,
                 searchAppBarState = searchBarState
