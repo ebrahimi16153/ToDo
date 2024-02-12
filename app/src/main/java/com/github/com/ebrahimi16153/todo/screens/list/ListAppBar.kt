@@ -43,7 +43,7 @@ import com.github.com.ebrahimi16153.todo.R
 import com.github.com.ebrahimi16153.todo.component.MyAlertDialog
 import com.github.com.ebrahimi16153.todo.component.PriorityCircle
 import com.github.com.ebrahimi16153.todo.data.Priority
-import com.github.com.ebrahimi16153.todo.ui.theme.myError
+
 import com.github.com.ebrahimi16153.todo.util.SearchBarState
 import com.github.com.ebrahimi16153.todo.viewmodel.SharedViewModel
 import  com.github.com.ebrahimi16153.todo.navigation.Action
@@ -280,7 +280,7 @@ fun DeleteAll(onDeleteAll: () -> Unit) {
                 Icon(
                     imageVector = Icons.Default.Delete,
                     contentDescription = "",
-                    tint = MaterialTheme.colorScheme.myError
+                    tint = MaterialTheme.colorScheme.error
                 )
 
             }
