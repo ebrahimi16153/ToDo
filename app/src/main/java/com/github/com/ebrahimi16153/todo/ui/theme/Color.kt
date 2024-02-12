@@ -1,8 +1,5 @@
 package com.github.com.ebrahimi16153.todo.ui.theme
 
-import androidx.compose.foundation.isSystemInDarkTheme
-import androidx.compose.material3.ColorScheme
-import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
 
 val Purple80 = Color(0xFFD0BCFF)
@@ -18,13 +15,13 @@ val Pink40 = Color(0xFF7D5260)
 val LowPriority = Color(0xFF00c980)
 val MediumPriority = Color(0xFFFFC114)
 val HighPriority = Color(0xFFFF4646)
-val NonePriority = Color(0xFFFFFFFF)
+val NonePriority = Color(0xFF858585)
 
 
-val lightGray = Color(0xFFFCFCFC)
-val mediumGray = Color(0xFF9C9C9C)
-val DarkGray = Color(0xFF141414)
+//val lightGray = Color(0xFFFCFCFC)
+//val mediumGray = Color(0xFF9C9C9C)
+//val DarkGray = Color(0xFF141414)
 
 
-val ColorScheme.myError :Color
-get() = HighPriority
+//val ColorScheme.myError :Color
+//get() = HighPriority

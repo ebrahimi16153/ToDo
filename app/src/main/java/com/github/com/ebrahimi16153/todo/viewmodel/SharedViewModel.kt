@@ -168,7 +168,7 @@ class SharedViewModel @Inject constructor(
 
     // handel taskScreen
 
-    fun initTaskScreenValues(toDoTask: ToDoTask?) {
+    fun updateTask(toDoTask: ToDoTask?) {
         if (toDoTask != null) {
             id.value = toDoTask.id
             title.value = toDoTask.title

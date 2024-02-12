@@ -1,8 +1,14 @@
 package com.github.com.ebrahimi16153.todo.screens.list
 
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.expandVertically
+import androidx.compose.animation.shrinkVertically
 import androidx.compose.foundation.Canvas
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -13,11 +19,26 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material3.DismissDirection
+import androidx.compose.material3.DismissValue
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
+import androidx.compose.material3.SwipeToDismiss
 import androidx.compose.material3.Text
+import androidx.compose.material3.rememberDismissState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
@@ -26,11 +47,14 @@ import com.github.com.ebrahimi16153.todo.component.EmptyContent
 import com.github.com.ebrahimi16153.todo.data.Priority
 import com.github.com.ebrahimi16153.todo.data.RequestState
 import com.github.com.ebrahimi16153.todo.data.models.ToDoTask
+import com.github.com.ebrahimi16153.todo.navigation.Action
 import com.github.com.ebrahimi16153.todo.util.SearchBarState
+import kotlinx.coroutines.delay
 
 @Composable
 fun ListContent(
     navigateToDoTask: (taskId: Int) -> Unit,
+    swipeToDelete: (action: Action, task: ToDoTask) -> Unit,
     allTasks: RequestState<List<ToDoTask>>,
     searchOfTask: RequestState<List<ToDoTask>>,
     searchAppBarState: SearchBarState,
@@ -48,7 +72,11 @@ fun ListContent(
             // handel what happened when Request is data,Error,loading
             if (searchOfTask is RequestState.Success) {
 
-                HandleListContent(tasks = searchOfTask.data, navigateToDoTask = navigateToDoTask)
+                HandleListContent(
+                    tasks = searchOfTask.data,
+                    navigateToDoTask = navigateToDoTask,
+                    swipeToDelete = swipeToDelete
+                )
 
             }
         } else {
@@ -57,22 +85,35 @@ fun ListContent(
                     if (allTasks is RequestState.Success) {
                         HandleListContent(
                             tasks = allTasks.data,
-                            navigateToDoTask = navigateToDoTask
+                            navigateToDoTask = navigateToDoTask,
+                            swipeToDelete = swipeToDelete
                         )
                     }
                 }
 
                 Priority.High -> {
 
-                    HandleListContent(tasks = taskByHigh, navigateToDoTask = navigateToDoTask)
+                    HandleListContent(
+                        tasks = taskByHigh,
+                        navigateToDoTask = navigateToDoTask,
+                        swipeToDelete = swipeToDelete
+                    )
                 }
 
                 Priority.Medium -> {
-                    HandleListContent(tasks = taskByMedium, navigateToDoTask = navigateToDoTask)
+                    HandleListContent(
+                        tasks = taskByMedium,
+                        navigateToDoTask = navigateToDoTask,
+                        swipeToDelete = swipeToDelete
+                    )
                 }
 
                 Priority.Low -> {
-                    HandleListContent(tasks = taskByLow, navigateToDoTask = navigateToDoTask)
+                    HandleListContent(
+                        tasks = taskByLow,
+                        navigateToDoTask = navigateToDoTask,
+                        swipeToDelete = swipeToDelete
+                    )
                 }
             }
 
@@ -82,8 +123,10 @@ fun ListContent(
 
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun HandleListContent(
+    swipeToDelete: (action: Action, task: ToDoTask) -> Unit,
     tasks: List<ToDoTask>,
     navigateToDoTask: (taskId: Int) -> Unit
 ) {
@@ -96,7 +139,54 @@ fun HandleListContent(
                 items = tasks,
                 key = { task -> task.id })
             { task ->
-                TaskItem(task = task, navigateToDoTask = navigateToDoTask)
+
+                //  handel swipe to delete
+                val dismissState = rememberDismissState()
+                val dismissDirection = dismissState.dismissDirection
+                val isDismissed = dismissState.isDismissed(DismissDirection.EndToStart)
+
+                if (isDismissed && dismissDirection  == DismissDirection.EndToStart){
+                  LaunchedEffect(key1 = dismissState ){
+
+                      delay(300)
+                      swipeToDelete(Action.DELETE,task)
+
+                    }
+                }
+
+                var itemAppeared  by remember {
+                    mutableStateOf(false)
+                }
+
+                LaunchedEffect(key1 = true){
+                    itemAppeared = true
+                }
+
+
+
+                val degreeAnimation =
+                    if (dismissState.targetValue == DismissValue.Default) 0f else 45f
+
+              // first animation
+
+                AnimatedVisibility(
+                    visible = itemAppeared && !isDismissed ,
+                    enter = expandVertically(animationSpec = tween(durationMillis = 300)),
+                    exit = shrinkVertically (animationSpec = tween(durationMillis = 300))
+                ) {
+
+                    SwipeToDismiss(
+                        state = dismissState,
+                        directions = setOf(DismissDirection.EndToStart),
+                        background = { RedBackground(degree = degreeAnimation) },
+                        dismissContent = {
+
+                            TaskItem(task = task, navigateToDoTask = navigateToDoTask)
+
+                        })
+                }
+
+
             }
         }
     }
@@ -150,6 +240,29 @@ fun TaskItem(
 
 
 }
+
+
+@Composable
+fun RedBackground(degree: Float) {
+
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(MaterialTheme.colorScheme.error),
+        contentAlignment = Alignment.CenterEnd,
+    ) {
+
+        Icon(
+            modifier = Modifier.rotate(degree),
+            imageVector = Icons.Default.Delete,
+            contentDescription = "",
+            tint = MaterialTheme.colorScheme.onError
+        )
+
+    }
+
+}
+
 
 @Preview
 @Composable

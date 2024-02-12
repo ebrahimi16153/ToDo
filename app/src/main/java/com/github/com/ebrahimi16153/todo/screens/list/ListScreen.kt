@@ -115,7 +115,13 @@ fun ListScreen(
                 taskByHigh = taskByHigh,
                 allTasks = tasks,
                 searchOfTask = searchTask,
-                searchAppBarState = searchBarState
+                searchAppBarState = searchBarState,
+                swipeToDelete = { action, task ->
+
+                    shearedViewModel.action.value = action
+                    shearedViewModel.updateTask(task)
+
+                }
             )
         }
 
