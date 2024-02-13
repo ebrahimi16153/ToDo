@@ -8,6 +8,7 @@ object Constants {
     // navigation const
 
     const val LIST_SCREEN = "list/{action}"
+    const val SPLASH_SCREEN = "splash"
     const val TASK_SCREEN = "task/{taskId}"
     const val LIST_SCREEN_ARGUMENT_KEY = "action"
     const val TASK_SCREEN_ARGUMENT_KEY = "taskId"
